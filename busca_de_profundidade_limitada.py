@@ -7,33 +7,54 @@ class Local:
     def adicionarVizinho(self, vizinho):
         self.vizinhos.append({'local': vizinho})
 
-# Função da busca em profundidade
-def buscaEmProfundidade(inicio, objetivo):
-    pilha = [] 
+# Função de busca em profundidade limitada
+def buscaEmProfundidadeLimitada(inicio, objetivo, limiteProfundidade):
+    pilha = []
     visitados = set()
 
-    pilha.append(inicio) # adiciona o nó inicial à pilha
-    visitados.add(inicio) # marca o nó inicial como visitado
+    pilha.append({'no': inicio, 'profundidade': 0})
+    visitados.add(inicio)
 
     while pilha:
-        local = pilha.pop() # remove o último nó da pilha
-        print(f"Visitando o local: {local.nome}")
+        atual = pilha.pop()
 
-        if local.nome == objetivo.nome: # se o nó é o objetivo, termina a busca
-            print(f"Objetivo encontrado: {local.nome}")
-            return
+        no = atual['no']
+        profundidade = atual['profundidade']
 
-        # Adiciona os vizinhos do nó atual à pilha
-        for vizinho in reversed(local.vizinhos): # inverte a ordem dos vizinhos para simular a pilha
+        print(f"Visitando o local: {no.nome}")
+
+        if no.nome == objetivo.nome:
+            print(f"Objetivo encontrado: {no.nome}")
+            return True
+
+        if profundidade >= limiteProfundidade:
+            continue
+
+        for vizinho in reversed(no.vizinhos):
             local_vizinho = vizinho['local']
-            if local_vizinho not in visitados: # se o vizinho ainda não foi visitado
-                pilha.append(local_vizinho)
-                visitados.add(local_vizinho) # marca o vizinho como visitado
+            if local_vizinho not in visitados:
+                pilha.append({'no': local_vizinho, 'profundidade': profundidade + 1})
+                visitados.add(local_vizinho)
 
-    print("Caminho não encontrado!")
-    return None
+    return False
 
-# Criação do grafo
+# Função de busca em profundidade iterativa
+def buscaProfundidadeIterativa(inicio, objetivo):
+    limiteProfundidade = 0
+
+    while True:
+        print(f"Tentando com limite de profundidade: {limiteProfundidade}")
+
+        encontrado = buscaEmProfundidadeLimitada(inicio, objetivo, limiteProfundidade)
+
+        if encontrado:
+            print(f"Objetivo encontrado com limite de profundidade {limiteProfundidade}")
+            return True
+        else:
+            print(f"Objetivo não encontrado com limite de profundidade {limiteProfundidade}")
+            limiteProfundidade += 1
+
+# Grafo
 localArad = Local("Arad")
 localZerind = Local("Zerind")
 localOradea = Local("Oradea")
@@ -56,32 +77,32 @@ localIasi = Local("Iasi")
 localNeamt = Local("Neamt")
 
 # Adicionando os vizinhos
-localArad.adicionarVizinho(localSibiu)
 localArad.adicionarVizinho(localTimisoara)
+localArad.adicionarVizinho(localSibiu)
 localArad.adicionarVizinho(localZerind)
 
 localZerind.adicionarVizinho(localArad)
 localZerind.adicionarVizinho(localOradea)
 
-localOradea.adicionarVizinho(localZerind)
 localOradea.adicionarVizinho(localSibiu)
+localOradea.adicionarVizinho(localZerind)
 
 localSibiu.adicionarVizinho(localArad)
+localSibiu.adicionarVizinho(localRimnicuVilcea)
 localSibiu.adicionarVizinho(localFagaras)
 localSibiu.adicionarVizinho(localOradea)
-localSibiu.adicionarVizinho(localRimnicuVilcea)
 
 localTimisoara.adicionarVizinho(localArad)
 localTimisoara.adicionarVizinho(localLugoj)
 
-localLugoj.adicionarVizinho(localTimisoara)
 localLugoj.adicionarVizinho(localMehadia)
+localLugoj.adicionarVizinho(localTimisoara)
 
-localMehadia.adicionarVizinho(localLugoj)
 localMehadia.adicionarVizinho(localDobreta)
+localMehadia.adicionarVizinho(localLugoj)
 
-localDobreta.adicionarVizinho(localMehadia)
 localDobreta.adicionarVizinho(localCraiova)
+localDobreta.adicionarVizinho(localMehadia)
 
 localCraiova.adicionarVizinho(localDobreta)
 localCraiova.adicionarVizinho(localPitesti)
@@ -94,8 +115,8 @@ localRimnicuVilcea.adicionarVizinho(localCraiova)
 localFagaras.adicionarVizinho(localSibiu)
 localFagaras.adicionarVizinho(localBucharest)
 
-localPitesti.adicionarVizinho(localRimnicuVilcea)
 localPitesti.adicionarVizinho(localCraiova)
+localPitesti.adicionarVizinho(localRimnicuVilcea)
 localPitesti.adicionarVizinho(localBucharest)
 
 localBucharest.adicionarVizinho(localFagaras)
@@ -122,5 +143,9 @@ localIasi.adicionarVizinho(localNeamt)
 
 localNeamt.adicionarVizinho(localIasi)
 
-# Busca em profundidade
-buscaEmProfundidade(localArad, localBucharest)
+resultado = buscaProfundidadeIterativa(localArad, localBucharest)
+
+if resultado:
+    print("Caminho encontrado!")
+else:
+    print("Caminho não encontrado!")
