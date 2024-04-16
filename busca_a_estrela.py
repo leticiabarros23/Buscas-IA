@@ -14,7 +14,7 @@ class Local:
 def busca_a_estrela(inicio, objetivo):
     abertos = [inicio] # Nós ainda não avaliados
     fechados = [] # Nós já avaliados
-    caminho = {inicio.nome: {'custo': 0, 'pai': None}} # O custo para chegar ao local inicial é 0 e não tem pai
+    caminho = {inicio.nome: {'custo': 0, 'pai': None}} # Custo para chegar ao local inicial é 0 e não tem pai
 
     # Função de custo total estimado
     def custo_total_estimado(local):
@@ -43,7 +43,7 @@ def busca_a_estrela(inicio, objetivo):
                 if vizinho['local'] not in abertos or custo_atualizado < caminho[vizinho['local'].nome]['custo']:
                     caminho[vizinho['local'].nome] = {'custo': custo_atualizado, 'pai': local_atual} # Atualiza o custo e o pai do vizinho
                     if vizinho['local'] not in abertos:
-                        abertos.append(vizinho['local']) # Adiciona o vizinho à lista de nós abertos
+                        abertos.append(vizinho['local']) # Adição do vizinho à lista de nós abertos
     return None
 
 
